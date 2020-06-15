@@ -43,8 +43,8 @@
             </Grid>
         </DockPanel>
 
-        <Grid Name="CanvasMain">
-            <Canvas  Background="White" MouseLeftButtonUp="CanvasMain_MouseLeftButtonUp"/>
+        <Grid>
+            <Canvas Name="CanvasMain" Background="White" MouseLeftButtonUp="CanvasMain_MouseLeftButtonUp"/>
         </Grid>
 
     </Grid>
