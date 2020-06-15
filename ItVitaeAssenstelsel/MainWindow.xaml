@@ -5,8 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ItVitaeAssenstelsel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Assenstelsel" Height="450" Width="800" MouseLeftButtonUp="Window_MouseLeftButtonUp">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
-        
+        <DockPanel>
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Informatie"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Wiskundige Coördinaten:"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Middelpunt:"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Beeldscherm Coördinaten:"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="(0,0)" Name="TextBkWis"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="(0,0)" Name="TextBkMiddenP"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="(0,0)" Name="TextBkBeeld"/>
+                </Grid>
+            </Grid>
+            
+            <Canvas>
+
+            </Canvas>
+        </DockPanel>
+    
     </Grid>
 </Window>

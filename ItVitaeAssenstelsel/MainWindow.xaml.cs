@@ -24,5 +24,11 @@ namespace ItVitaeAssenstelsel
         {
             InitializeComponent();
         }
+
+        private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Point mousePos = PointToScreen(Mouse.GetPosition(this));
+            TextBkBeeld.Text = string.Format("({0},{1})", mousePos.X, mousePos.Y);
+        }
     }
 }
