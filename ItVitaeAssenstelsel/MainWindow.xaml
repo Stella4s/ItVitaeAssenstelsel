@@ -9,13 +9,13 @@
     
     <Window.Resources>
         <Style TargetType="TextBlock">
-            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="Padding" Value="2,2,5,2"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
     </Window.Resources>
     
     <Grid>
-        <DockPanel>
+        <DockPanel Panel.ZIndex="1" LastChildFill="False">
             <Grid DockPanel.Dock="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -36,16 +36,16 @@
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Wiskundige Coördinaten:"/>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Middelpunt:"/>
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Beeldscherm Coördinaten:"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="(0,0)" Name="TextBkWis"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="(0,0)" Name="TextBkMiddenP"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="(0,0)" Name="TextBkBeeld"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="(,)" Name="TextBkWis"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="(,)" Name="TextBkMiddenP"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="(,)" Name="TextBkBeeld"/>
                 </Grid>
             </Grid>
-            
-            <Canvas>
-
-            </Canvas>
         </DockPanel>
-    
+
+        <Grid Name="CanvasMain">
+            <Canvas  Background="White" MouseLeftButtonUp="CanvasMain_MouseLeftButtonUp"/>
+        </Grid>
+
     </Grid>
 </Window>
