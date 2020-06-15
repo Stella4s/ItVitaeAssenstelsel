@@ -40,47 +40,17 @@ namespace ItVitaeAssenstelsel
         {
            
             Point mousePosCanvas = Mouse.GetPosition(this);
-          
-            //if (firstClick)
-           // {
-                //Temporary Canvas remove.
-                if (!firstClick)
-                {
-                    CanvasMain.Children.Clear();
-                }
+
+            if (firstClick)
+            {
                 //Set middenPunt
-                middenPunt = mousePosCanvas;
+                middenPunt =  mousePosCanvas;
                 DrawGrid(rasterOffSet, middenPunt, CanvasMain);
                 TextBkMiddenP.Text = string.Format("({0}, {1})", 0, 0);
 
-                //Create and add lines to CanvasMain.
-                //Start at 0 end at PrimaryScreen Width/Height to ensure the line will cross the entire window.
-                Line lineHor = new Line
-                {
-                    Stroke = Brushes.Red,
-                    StrokeThickness = 1,
-                    X1 = 0,
-                    X2 = SystemParameters.PrimaryScreenWidth,
-                    Y1 = mousePosCanvas.Y,
-                    Y2 = mousePosCanvas.Y
-                };
-                Line lineVer = new Line
-                {
-                    Stroke = Brushes.Red,
-                    StrokeThickness = 1,
-                    X1 = mousePosCanvas.X,
-                    X2 = mousePosCanvas.X,
-                    Y1 = 0,
-                    Y2 = SystemParameters.PrimaryScreenHeight
-                };
-                
-              
-                //Add both lines to canvas.
-                CanvasMain.Children.Add(lineHor);
-                CanvasMain.Children.Add(lineVer);
 
                 firstClick = false;
-            //}
+            }
 
             //Set Wiskundige coordinaten. Middenpunt - mouseCanvas positie. 
             TextBkWis.Text = string.Format("({0:0}, {1:0})", middenPunt.X - mousePosCanvas.X, middenPunt.Y - mousePosCanvas.Y);
@@ -94,9 +64,11 @@ namespace ItVitaeAssenstelsel
             //Draw the grid
             DrawingVisual gridLinesVisual = new DrawingVisual();
             DrawingContext dct = gridLinesVisual.RenderOpen();
-            Pen darkPen = new Pen(Brushes.DarkOrange, 1), lightPen = new Pen(Brushes.Orange, 0.5);
+            Pen darkPen = new Pen(Brushes.DarkOrange, 1), lightPen = new Pen(Brushes.Orange, 0.5),
+                mainPen = new Pen(Brushes.Red, 1);
             darkPen.Freeze();
             lightPen.Freeze();
+            mainPen.Freeze();
 
             int yOffset = offSet,
                 xOffset = offSet,
@@ -112,7 +84,7 @@ namespace ItVitaeAssenstelsel
 
             for (int i = 0; i <= rows; i++, j++)
             {
-                dct.DrawLine(j % alternate == 0 ? darkPen : lightPen, a, b);
+                dct.DrawLine(a.Y == (Math.Round(middenP.Y) + 0.5) ? mainPen : (j % alternate == 0 ? darkPen : lightPen), a, b);
                 a.Offset(0, yOffset);
                 b.Offset(0, yOffset);
             }
@@ -124,7 +96,7 @@ namespace ItVitaeAssenstelsel
 
             for (int i = 0; i <= columns; i++, j++)
             {
-                dct.DrawLine(j % alternate == 0 ? darkPen : lightPen, a, b);
+                dct.DrawLine(a.X == (Math.Round(middenP.X) + 0.5) ? mainPen : (j % alternate == 0 ? darkPen : lightPen), a, b);
                 a.Offset(xOffset, 0);
                 b.Offset(xOffset, 0);
             }
@@ -141,7 +113,7 @@ namespace ItVitaeAssenstelsel
         }
 
         /// <summary>
-        //  To use with making new Points to use with drawingLines in DrawGrid.
+        /// To use with making new Points to use with drawingLines in DrawGrid.
         /// Using rounded actualheight to have the horizontal lines reach from top to bottom canvas without offsetting them from main lines.
         /// Adding + 0.5 to prevent grid from being blurry.
         /// </summary>
@@ -150,7 +122,7 @@ namespace ItVitaeAssenstelsel
         /// <returns></returns>
         private double AdjustingPoint(double point, double Canvas)
         {
-            return Math.Round(point - (Math.Round((Canvas / 100)) * 100)) + 0.5;
+            return Math.Round(point - (Math.Round((Canvas / 100)) * 100) - 100) + 0.5;
         }
 
         private void RemoveGrid(Canvas mainCanvas)
