@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace ItVitaeAssenstelsel
                 TextBkMiddenP.Text = string.Format("({0}, {1})", 0, 0);
 
 
-                firstClick = false;
+               // firstClick = false;
             }
 
             //Set Wiskundige coordinaten. Middenpunt - mouseCanvas positie. 
@@ -79,8 +80,8 @@ namespace ItVitaeAssenstelsel
                 j = 0;
 
             //Draw the horizontal lines
-            Point a = new Point(0, AdjustingPoint(middenP.Y, CanvasMain.ActualHeight));
-            Point b = new Point(SystemParameters.PrimaryScreenWidth, AdjustingPoint(middenP.Y, CanvasMain.ActualHeight));
+            Point a = new Point(0, AdjustingPoint(middenP.Y, mainCanvas.ActualHeight));
+            Point b = new Point(SystemParameters.PrimaryScreenWidth, AdjustingPoint(middenP.Y, mainCanvas.ActualHeight));
 
             for (int i = 0; i <= rows; i++, j++)
             {
@@ -91,15 +92,21 @@ namespace ItVitaeAssenstelsel
             j = 0;
 
             //Draw the vertical lines
-            a = new Point(AdjustingPoint(middenP.X, CanvasMain.ActualWidth), 0);
-            b = new Point(AdjustingPoint(middenP.X, CanvasMain.ActualWidth), SystemParameters.PrimaryScreenHeight);
+            a = new Point(AdjustingPoint(middenP.X, mainCanvas.ActualWidth), 0);
+            b = new Point(AdjustingPoint(middenP.X, mainCanvas.ActualWidth), SystemParameters.PrimaryScreenHeight);
 
             for (int i = 0; i <= columns; i++, j++)
             {
+                if (j % alternate == 0)
+                {
+                    AddGridText(dct, j + ((int)((AdjustingPoint(middenP.X, mainCanvas.ActualWidth) + 0.5) / 10) * 2), a.X, (Math.Round(middenP.Y) + 0.5));
+                }
                 dct.DrawLine(a.X == (Math.Round(middenP.X) + 0.5) ? mainPen : (j % alternate == 0 ? darkPen : lightPen), a, b);
                 a.Offset(xOffset, 0);
                 b.Offset(xOffset, 0);
             }
+
+            AddGridText(dct, 0, 0, 0);
 
             dct.Close();
 
@@ -110,6 +117,19 @@ namespace ItVitaeAssenstelsel
             lines.Source = bmp;
 
             mainCanvas.Children.Add(lines);
+        }
+
+        private void AddGridText(DrawingContext drawingContext, int number, double x, double y)
+        {
+            FormattedText formattedText = new FormattedText(
+                number.ToString(),
+                CultureInfo.GetCultureInfo("en-us"),
+                FlowDirection.LeftToRight,
+                new Typeface("Segoe UI"),
+                10,
+                Brushes.ForestGreen);
+
+            drawingContext.DrawText(formattedText, new Point(x, y));
         }
 
         /// <summary>
