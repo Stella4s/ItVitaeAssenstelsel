@@ -39,24 +39,26 @@ namespace ItVitaeAssenstelsel
 
         private void CanvasMain_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-           
             Point mousePosCanvas = Mouse.GetPosition(this);
-
             if (firstClick)
             {
-                //Set middenPunt
+                //Set middenPunt and save it to compare other coordinates to.
                 middenPunt =  mousePosCanvas;
                 DrawGrid(rasterOffSet, middenPunt, CanvasMain);
                 TextBkMiddenP.Text = string.Format("({0}, {1})", 0, 0);
-
-
-               // firstClick = false;
+                firstClick = false;
             }
 
             //Set Wiskundige coordinaten. Middenpunt - mouseCanvas positie. 
-            TextBkWis.Text = string.Format("({0:0}, {1:0})", middenPunt.X - mousePosCanvas.X, middenPunt.Y - mousePosCanvas.Y);
+            TextBkWis.Text = string.Format("({0:0}, {1:0})", (middenPunt.X - mousePosCanvas.X) / 10, (middenPunt.Y - mousePosCanvas.Y) / 10);
         }
 
+        /// <summary>
+        /// Called to draw and redraw the grid. Including numbers.
+        /// </summary>
+        /// <param name="offSet">The pixeloffset between lines.</param>
+        /// <param name="middenP">The point in the middle.</param>
+        /// <param name="mainCanvas">The canvas it needs to be drawn on.</param>
         public void DrawGrid(int offSet, Point middenP, Canvas mainCanvas)
         {
             RemoveGrid(mainCanvas);
@@ -79,34 +81,53 @@ namespace ItVitaeAssenstelsel
                 alternate = 10,
                 j = 0;
 
-            //Draw the horizontal lines
+            //Make the points for the horizontal lines.
             Point a = new Point(0, AdjustingPoint(middenP.Y, mainCanvas.ActualHeight));
             Point b = new Point(SystemParameters.PrimaryScreenWidth, AdjustingPoint(middenP.Y, mainCanvas.ActualHeight));
 
+
+            //Offset for nummeric lables in grid.
+            //Calculated based on how many columns/rows in the actual midpoint will be reached.
+            //Converting to and from a Decimal to allow for rounding up when the numberoffset is in the 10's when dividing by 100 and should not result in 0.
+            int numOffset = (((int)a.Y * -1) + (int)middenP.Y - rows);
+            numOffset = ((int)Math.Round((decimal)numOffset / 100)) * 10 + 10;
+            //+ 10 at the end only for rows. For some reason there was a 10 offset, which I could not figure out what caused it 
+            //It might be the rasteroffsset or window thickness, but I am not certain and could not determine for sure.
+
+            //Draw Horizontal lines.
             for (int i = 0; i <= rows; i++, j++)
             {
+                if (j % alternate == 0)
+                {
+                    //If statement so it won't add two 0's in the middle.
+                    if (a.Y != (Math.Round(middenP.Y) + 0.5))
+                    AddGridText(dct, (rows/ 100) * 10 - j + numOffset, (Math.Round(middenP.X) + 0.5),  a.Y + 1);
+                }
                 dct.DrawLine(a.Y == (Math.Round(middenP.Y) + 0.5) ? mainPen : (j % alternate == 0 ? darkPen : lightPen), a, b);
                 a.Offset(0, yOffset);
                 b.Offset(0, yOffset);
             }
             j = 0;
 
-            //Draw the vertical lines
+            //Make points for the vertical lines
             a = new Point(AdjustingPoint(middenP.X, mainCanvas.ActualWidth), 0);
             b = new Point(AdjustingPoint(middenP.X, mainCanvas.ActualWidth), SystemParameters.PrimaryScreenHeight);
 
+            numOffset = ((int)a.X * -1) + (int)middenP.X - columns;
+            numOffset = ((int)Math.Round((decimal)numOffset / 100)) * 10;
+
+            //Draw vertical lines.
             for (int i = 0; i <= columns; i++, j++)
             {
+                //For each 10 line mark add a number indicator.
                 if (j % alternate == 0)
                 {
-                    AddGridText(dct, j + ((int)((AdjustingPoint(middenP.X, mainCanvas.ActualWidth) + 0.5) / 10) * 2), a.X, (Math.Round(middenP.Y) + 0.5));
+                    AddGridText(dct, (columns / 100) * 10 - j + numOffset, a.X + 1, (Math.Round(middenP.Y) + 0.5));
                 }
                 dct.DrawLine(a.X == (Math.Round(middenP.X) + 0.5) ? mainPen : (j % alternate == 0 ? darkPen : lightPen), a, b);
                 a.Offset(xOffset, 0);
                 b.Offset(xOffset, 0);
             }
-
-            AddGridText(dct, 0, 0, 0);
 
             dct.Close();
 
@@ -119,6 +140,13 @@ namespace ItVitaeAssenstelsel
             mainCanvas.Children.Add(lines);
         }
 
+        /// <summary>
+        /// Formats each number in the grid.
+        /// </summary>
+        /// <param name="drawingContext">The drawingContext it should be drawn on.</param>
+        /// <param name="number">The number it should draw.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
         private void AddGridText(DrawingContext drawingContext, int number, double x, double y)
         {
             FormattedText formattedText = new FormattedText(
@@ -145,6 +173,10 @@ namespace ItVitaeAssenstelsel
             return Math.Round(point - (Math.Round((Canvas / 100)) * 100) - 100) + 0.5;
         }
 
+        /// <summary>
+        /// Simple method to remove the grid before redrawing.
+        /// </summary>
+        /// <param name="mainCanvas">Canvas which the grid needs to be removed off.</param>
         private void RemoveGrid(Canvas mainCanvas)
         {
             foreach (UIElement obj in mainCanvas.Children)
