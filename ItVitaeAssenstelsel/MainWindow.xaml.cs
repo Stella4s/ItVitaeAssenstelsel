@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,17 +21,31 @@ namespace ItVitaeAssenstelsel
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window , INotifyPropertyChanged
     {
         #region private variables
         private bool firstClick = true;
+        private bool _MakeNewGrid = false;
         private Point middenPunt;
         private int rasterOffSet = 10;
         #endregion
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
         }
+
+        #region Properties
+        public bool MakeNewGrid
+        {
+            get { return _MakeNewGrid; }
+            set
+            {
+                _MakeNewGrid = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -40,7 +56,7 @@ namespace ItVitaeAssenstelsel
         private void CanvasMain_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Point mousePosCanvas = Mouse.GetPosition(this);
-            if (firstClick)
+            if (MakeNewGrid || firstClick)
             {
                 //Set middenPunt and save it to compare other coordinates to.
                 middenPunt =  mousePosCanvas;
@@ -188,5 +204,14 @@ namespace ItVitaeAssenstelsel
                 }
             }
         }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        #endregion
     }
 }
