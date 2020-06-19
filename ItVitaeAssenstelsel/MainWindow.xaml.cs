@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -311,6 +312,19 @@ namespace ItVitaeAssenstelsel
                     mainCanvas.Children.Remove(obj);
                     break;
                 }
+            }
+        }
+        #endregion
+
+        #region colour related methods.
+        private List<Color> _SelectableColours;
+        private void InitializeColourArray()
+        {
+            Type ColorsType = typeof(Colors);
+            PropertyInfo[] ColorsProperty = ColorsType.GetProperties();
+            foreach (PropertyInfo property in ColorsProperty)
+            {
+                _SelectableColours.Add((Color)ColorConverter.ConvertFromString(property.Name));
             }
         }
         #endregion
