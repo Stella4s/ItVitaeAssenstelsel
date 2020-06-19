@@ -111,8 +111,8 @@ namespace ItVitaeAssenstelsel
                 Stroke = KleurRand,
                 StrokeThickness = BreedteRand
             };
-            Canvas.SetTop(punt, centerPoint.Y + (WisY * -1) - punt.StrokeThickness);
-            Canvas.SetLeft(punt, centerPoint.X + (WisX * -1) - punt.StrokeThickness);
+            Canvas.SetTop(punt, centerPoint.Y + (WisY * -1)  - (punt.Height / 2));
+            Canvas.SetLeft(punt, centerPoint.X + (WisX * -1)  - (punt.Width / 2));
 
             return punt;
         }

@@ -24,10 +24,10 @@ namespace ItVitaeAssenstelsel
     public partial class MainWindow : Window , INotifyPropertyChanged
     {
         #region private variables
-        private bool firstClick = true;
-        private bool _MakeNewGrid = false;
+        private bool firstClick = true, _MakeNewGrid = false;
         private Point middenPunt, wisPoint;
-        private int rasterOffSet = 10;
+        private int rasterOffSet = 10, _DiktePunt = 5, _DikteRand, _MaxDikteRand = 2;
+        private Canvas CanvasPunten;
         #endregion
         public MainWindow()
         {
@@ -46,8 +46,37 @@ namespace ItVitaeAssenstelsel
                 OnPropertyChanged();
             }
         }
+        public int DiktePunt
+        {
+            get { return _DiktePunt; }
+            set
+            {
+                _DiktePunt = value;
+                MaxDikteRand = (DiktePunt / 2);
+                OnPropertyChanged();
+            }
+        }
+        public int DikteRand
+        {
+            get { return _DikteRand; }
+            set
+            {
+                _DikteRand = value;
+                OnPropertyChanged();
+            }
+        }
+        public int MaxDikteRand
+        {
+            get { return _MaxDikteRand; }
+            set
+            {
+                _MaxDikteRand = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
+        #region Control and Other Related Methods.
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Point mousePos = PointToScreen(Mouse.GetPosition(this));
@@ -85,18 +114,28 @@ namespace ItVitaeAssenstelsel
             TextBkWis.Text = string.Format("({0:0}, {1:0})", wisPoint.X / 10, wisPoint.Y / 10);
         }
 
+        private void Btn_Click_ResetPunten(object sender, RoutedEventArgs e)
+        {
+            ResetPuntenCanvas(CanvasMain);
+        }
+        #endregion
+
         #region coordinate system related methods.
         /// <summary>
-        /// Called to draw and redraw the grid. Including numbers.
+        /// Called to draw and redraw the grid. Including numbers as well as resetting PuntenCanvas.
         /// </summary>
         /// <param name="offSet">The pixeloffset between lines.</param>
         /// <param name="middenP">The point in the middle.</param>
         /// <param name="mainCanvas">The canvas it needs to be drawn on.</param>
         public void DrawGrid(int offSet, Point middenP, Canvas mainCanvas)
         {
+            //Call RemoveGrid to remove the grid, but also ResetPuntenCanvas to remove any prior placed points.
             RemoveGrid(mainCanvas);
+            ResetPuntenCanvas(mainCanvas);
+
             Image lines = new Image();
             lines.SetValue(Panel.ZIndexProperty, -100);
+
             //Draw the grid
             DrawingVisual gridLinesVisual = new DrawingVisual();
             DrawingContext dct = gridLinesVisual.RenderOpen();
@@ -221,9 +260,27 @@ namespace ItVitaeAssenstelsel
                 }
             }
         }
+
         #endregion
 
         #region punt related methods
+        /// <summary>
+        /// Initializes and Resets PuntenCanvas
+        /// </summary>
+        /// <param name="mainCanvas">The canvas PuntenCanvas is located in.</param>
+        private void ResetPuntenCanvas(Canvas mainCanvas)
+        {
+            RemovePunten(mainCanvas);
+            CanvasPunten = new Canvas();
+            mainCanvas.Children.Add(CanvasPunten);
+        }
+
+        /// <summary>
+        /// Makes a new Punt with given values, calls punt.DrawPoint to make an ellipse.
+        /// And adds it to CanvasPunten.
+        /// </summary>
+        /// <param name="wisPoint">The point of the Wiskundige Coordinaten.</param>
+        /// <param name="mousePosition">Point with the screen coordinates.</param>
         public void DrawPoint(Point wisPoint, Point mousePosition)
         {
             Punt punt = new Punt
@@ -234,11 +291,27 @@ namespace ItVitaeAssenstelsel
                 BeeldY = mousePosition.Y,
                 KleurP = Brushes.Red,
                 KleurRand = Brushes.BlueViolet,
-                DikteP = 10,
-                BreedteRand = 4
+                DikteP = DiktePunt,
+                BreedteRand = DikteRand
             };
             Ellipse ellipse = punt.DrawPoint(middenPunt);
-            CanvasMain.Children.Add(ellipse);
+            CanvasPunten.Children.Add(ellipse);
+        }
+
+        /// <summary>
+        /// To remove punten canvas before making a new one.
+        /// </summary>
+        /// <param name="mainCanvas"></param>
+        private void RemovePunten(Canvas mainCanvas)
+        {
+            foreach (UIElement obj in mainCanvas.Children)
+            {
+                if (obj is Canvas)
+                {
+                    mainCanvas.Children.Remove(obj);
+                    break;
+                }
+            }
         }
         #endregion
 
