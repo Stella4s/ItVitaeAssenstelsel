@@ -26,13 +26,14 @@ namespace ItVitaeAssenstelsel
         #region private variables
         private bool firstClick = true;
         private bool _MakeNewGrid = false;
-        private Point middenPunt;
+        private Point middenPunt, wisPoint;
         private int rasterOffSet = 10;
         #endregion
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
+            wisPoint = new Point(0, 0);
         }
 
         #region Properties
@@ -60,15 +61,31 @@ namespace ItVitaeAssenstelsel
             {
                 //Set middenPunt and save it to compare other coordinates to.
                 middenPunt =  mousePosCanvas;
+
+                //Draw the grid using values.
                 DrawGrid(rasterOffSet, middenPunt, CanvasMain);
+
+                //Set the text for the midpoint.
                 TextBkMiddenP.Text = string.Format("({0}, {1})", 0, 0);
+
+                //Set firstclick and reset wispoint.
                 firstClick = false;
+                wisPoint.X = 0; wisPoint.Y = 0;
+            }
+            else
+            {
+                //Set Wiskundige coordinaten. Middenpunt - mouseCanvas positie. 
+                wisPoint.X = (middenPunt.X - mousePosCanvas.X) ;
+                wisPoint.Y = (middenPunt.Y - mousePosCanvas.Y) ;
+
+                //Draw the point based on coordinates.
+                DrawPoint(wisPoint, mousePosCanvas);
             }
 
-            //Set Wiskundige coordinaten. Middenpunt - mouseCanvas positie. 
-            TextBkWis.Text = string.Format("({0:0}, {1:0})", (middenPunt.X - mousePosCanvas.X) / 10, (middenPunt.Y - mousePosCanvas.Y) / 10);
+            TextBkWis.Text = string.Format("({0:0}, {1:0})", wisPoint.X / 10, wisPoint.Y / 10);
         }
 
+        #region coordinate system related methods.
         /// <summary>
         /// Called to draw and redraw the grid. Including numbers.
         /// </summary>
@@ -204,6 +221,26 @@ namespace ItVitaeAssenstelsel
                 }
             }
         }
+        #endregion
+
+        #region punt related methods
+        public void DrawPoint(Point wisPoint, Point mousePosition)
+        {
+            Punt punt = new Punt
+            {
+                WisX = wisPoint.X,
+                WisY = wisPoint.Y,
+                BeeldX = mousePosition.X,
+                BeeldY = mousePosition.Y,
+                KleurP = Brushes.Red,
+                KleurRand = Brushes.BlueViolet,
+                DikteP = 10,
+                BreedteRand = 4
+            };
+            Ellipse ellipse = punt.DrawPoint(middenPunt);
+            CanvasMain.Children.Add(ellipse);
+        }
+        #endregion
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
