@@ -49,6 +49,8 @@ namespace ItVitaeAssenstelsel
             InitializeColourBoxes();
             ComboBoxColour01.ItemsSource = ColourBoxes;
             ComboBoxColour02.ItemsSource = ColourBoxes;
+            ComboBoxColour01.SelectedItem = 1;
+            ComboBoxColour02.SelectedItem = 1;
 
             BrushConvert = new BrushConverter();
 
@@ -352,11 +354,21 @@ namespace ItVitaeAssenstelsel
                 WisY = wisPoint.Y,
                 BeeldX = mousePosition.X,
                 BeeldY = mousePosition.Y,
-                KleurP = (Brush)BrushConvert.ConvertFromString(BrushBoxPunt.ColourName),
-                KleurRand = (Brush)BrushConvert.ConvertFromString(BrushBoxRand.ColourName),
                 DikteP = DiktePunt,
                 BreedteRand = DikteRand
             };
+            //Try catch in case nothing is selected and either property is still null.
+            try
+            {
+                punt.KleurP = (Brush)BrushConvert.ConvertFromString(BrushBoxPunt.ColourName);
+                punt.KleurRand = (Brush)BrushConvert.ConvertFromString(BrushBoxRand.ColourName);
+            }
+            catch
+            {
+                punt.KleurP = Brushes.Gray;
+                punt.KleurRand = Brushes.Black;
+            }
+
             Ellipse ellipse = punt.DrawPoint(middenPunt);
             CanvasPunten.Children.Add(ellipse);
         }
