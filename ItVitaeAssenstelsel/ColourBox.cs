@@ -13,7 +13,7 @@ namespace ItVitaeAssenstelsel
     {
         #region private properties
         private string _ColourName;
-        private Color _Colour;
+        //private Color _Colour;
         #endregion
 
         #region public properties
@@ -23,11 +23,13 @@ namespace ItVitaeAssenstelsel
             set
             {
                 _ColourName = value;
-                Colour = (Color)ColorConverter.ConvertFromString(ColourName);
+                //Colour = (Color)ColorConverter.ConvertFromString(ColourName);
                 OnPropertyChanged();
             }
         }
-        public Color Colour
+        //It appears the separate Color property was not necessary.
+        //However it is kept for now in case it is still needed afterall. 
+        /*public Color Colour
         {
             get { return _Colour; }
             set
@@ -35,7 +37,7 @@ namespace ItVitaeAssenstelsel
                 _Colour = value;
                 OnPropertyChanged();
             }
-        }
+        }*/
         #endregion
 
         #region INotifyPropertyChanged

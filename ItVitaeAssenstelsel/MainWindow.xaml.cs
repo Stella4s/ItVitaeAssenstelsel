@@ -22,28 +22,40 @@ namespace ItVitaeAssenstelsel
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window , INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region private variables
-        private bool firstClick = true, _MakeNewGrid = false;
+        private bool firstClick = true;
         private Point middenPunt, wisPoint;
-        private int rasterOffSet = 10, _DiktePunt = 5, _DikteRand, _MaxDikteRand = 2;
+        private int rasterOffSet = 10;
         private Canvas CanvasPunten;
-        private List<ColourBox> _ColourBoxes;
+        private BrushConverter BrushConvert;
         #endregion
+
+        #region private variables for public properties
+        private bool _MakeNewGrid = false;
+        private int _DiktePunt = 5, _DikteRand, _MaxDikteRand = 2;
+        private List<ColourBox> _ColourBoxes;
+        private ColourBox _BrushBoxPunt, _BrushBoxRand;
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
 
+            //Make new list, fill with initialize. Then set itemsources.
             ColourBoxes = new List<ColourBox>();
             InitializeColourBoxes();
             ComboBoxColour01.ItemsSource = ColourBoxes;
+            ComboBoxColour02.ItemsSource = ColourBoxes;
+
+            BrushConvert = new BrushConverter();
 
             wisPoint = new Point(0, 0);
         }
 
-        #region Properties
+        #region Public Properties
         public bool MakeNewGrid
         {
             get { return _MakeNewGrid; }
@@ -87,6 +99,24 @@ namespace ItVitaeAssenstelsel
             set
             {
                 _ColourBoxes = value;
+                OnPropertyChanged();
+            }
+        }
+        public ColourBox BrushBoxPunt
+        {
+            get { return _BrushBoxPunt; }
+            set
+            {
+                _BrushBoxPunt = value;
+                OnPropertyChanged();
+            } 
+        }
+        public ColourBox BrushBoxRand
+        {
+            get { return _BrushBoxRand; }
+            set
+            {
+                _BrushBoxRand = value;
                 OnPropertyChanged();
             }
         }
@@ -134,6 +164,22 @@ namespace ItVitaeAssenstelsel
         {
             ResetPuntenCanvas(CanvasMain);
         }
+
+        private void ComboBoxColour02_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is ComboBox box)
+            {
+                Color selectedColor = (Color)(box.SelectedItem as PropertyInfo).GetValue(null, null);
+                box.Background = new SolidColorBrush(selectedColor);
+                if (box.SelectedItem is ColourBox)
+                {
+                    ColourBox cbox = box.SelectedItem as ColourBox;
+                    box.Text = cbox.ColourName;
+                }
+            }
+
+        }
+
         #endregion
 
         #region coordinate system related methods.
@@ -291,6 +337,7 @@ namespace ItVitaeAssenstelsel
             mainCanvas.Children.Add(CanvasPunten);
         }
 
+ 
         /// <summary>
         /// Makes a new Punt with given values, calls punt.DrawPoint to make an ellipse.
         /// And adds it to CanvasPunten.
@@ -305,8 +352,8 @@ namespace ItVitaeAssenstelsel
                 WisY = wisPoint.Y,
                 BeeldX = mousePosition.X,
                 BeeldY = mousePosition.Y,
-                KleurP = Brushes.Red,
-                KleurRand = Brushes.BlueViolet,
+                KleurP = (Brush)BrushConvert.ConvertFromString(BrushBoxPunt.ColourName),
+                KleurRand = (Brush)BrushConvert.ConvertFromString(BrushBoxRand.ColourName),
                 DikteP = DiktePunt,
                 BreedteRand = DikteRand
             };
