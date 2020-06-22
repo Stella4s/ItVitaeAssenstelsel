@@ -8,6 +8,15 @@
         Title="Assenstelsel" Height="450" Width="800" MouseLeftButtonUp="Window_MouseLeftButtonUp">
 
     <Window.Resources>
+        <local:ColourToBrushConverter x:Key="ColourConverter"/>
+
+        <DataTemplate x:Key="DataTemplateColour" DataType="ColourBox">
+            <Rectangle Height="15" Width="15" 
+                       Stroke="Black"
+                       Fill="{Binding Colour, Converter={StaticResource ColourConverter}}" 
+                       Margin="0,1,0,1"/>
+        </DataTemplate>
+
         <Style TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="13"/>
@@ -91,17 +100,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Button    Grid.Column="6" Grid.Row="0" >
-                                    <Grid>
-                                        <TextBlock Text="Kleur Punt"/>
-                                        <ComboBox Panel.ZIndex="-1">
-                                            <ListBox>
+                                <Button Grid.Column="6" Grid.Row="0" >
+                                    <ComboBox x:Name="ComboBoxColour01" ItemTemplate="{StaticResource DataTemplateColour}">
+                                            <ComboBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel/>
+                                                    <UniformGrid/>
                                                 </ItemsPanelTemplate>
-                                            </ListBox>
+                                            </ComboBox.ItemsPanel>
                                         </ComboBox>
-                                    </Grid>
                                 </Button>
                                 <Button    Grid.Column="6" Grid.Row="1" Content="Kleur Rand"/>
                             </Grid>

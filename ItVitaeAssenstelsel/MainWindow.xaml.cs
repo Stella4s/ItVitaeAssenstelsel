@@ -29,11 +29,17 @@ namespace ItVitaeAssenstelsel
         private Point middenPunt, wisPoint;
         private int rasterOffSet = 10, _DiktePunt = 5, _DikteRand, _MaxDikteRand = 2;
         private Canvas CanvasPunten;
+        private List<ColourBox> _ColourBoxes;
         #endregion
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
+
+            ColourBoxes = new List<ColourBox>();
+            InitializeColourBoxes();
+            ComboBoxColour01.ItemsSource = ColourBoxes;
+
             wisPoint = new Point(0, 0);
         }
 
@@ -72,6 +78,15 @@ namespace ItVitaeAssenstelsel
             set
             {
                 _MaxDikteRand = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<ColourBox> ColourBoxes
+        {
+            get { return _ColourBoxes; }
+            set
+            {
+                _ColourBoxes = value;
                 OnPropertyChanged();
             }
         }
@@ -317,14 +332,13 @@ namespace ItVitaeAssenstelsel
         #endregion
 
         #region colour related methods.
-        private List<Color> _SelectableColours;
-        private void InitializeColourArray()
+        private void InitializeColourBoxes()
         {
             Type ColorsType = typeof(Colors);
             PropertyInfo[] ColorsProperty = ColorsType.GetProperties();
             foreach (PropertyInfo property in ColorsProperty)
             {
-                _SelectableColours.Add((Color)ColorConverter.ConvertFromString(property.Name));
+                ColourBoxes.Add(new ColourBox { ColourName = property.Name});
             }
         }
         #endregion
